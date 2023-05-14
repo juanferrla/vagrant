@@ -1,0 +1,20 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "metal2" do |vb|
+    vb.vm.box = "ubuntu/focal64"
+    vb.vm.network "public_network", bridge: "en1: Wi-Fi (AirPort)", ip: "192.168.100.201"  
+  end
+  config.vm.provider "virtualbox" do |v|
+    v.name = "metal2"
+    v.memory = "4096"
+    v.cpus = 2
+  end
+  config.vm.hostname = "metal2"
+  config.vm.provision "file", source: "../id_rsa.pub", destination: "~/.ssh/me.pub"
+  config.vm.provision "shell", inline: <<-SHELL
+  cat /home/vagrant/.ssh/me.pub >> /home/vagrant/.ssh/authorized_keys
+  SHELL
+end
